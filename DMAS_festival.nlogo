@@ -364,7 +364,7 @@ SLIDER
 %infected
 0
 100
-1.87
+1.32
 0.11
 1
 NIL
@@ -387,14 +387,29 @@ HORIZONTAL
 
 SWITCH
 34
-298
+332
 137
-331
+365
 mask
 mask
 0
 1
 -1000
+
+SLIDER
+15
+277
+187
+310
+infectiousness
+infectiousness
+100
+1000
+513.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
