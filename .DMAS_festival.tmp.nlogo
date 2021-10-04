@@ -14,6 +14,10 @@ visitors-own[
   corona?
   infectious?
   vaccinated?
+  stayRed
+  stayOrange
+  stayYellow
+  stayBlue
 ]
 
 globals[
@@ -154,20 +158,20 @@ to-report ticks-to-stay-on-patch [p]
   if [pcolor] of p = red
     [
       ; changed 50 to 150
-      report 150
+      report stayRed
     ]
   if [pcolor] of p = orange
     [
       ; changed 7 to 75
-      report 75
+      report stayOrange
     ]
   if [pcolor] of p = blue
     [
-      report 2
+      report stayBlue
     ]
   if [pcolor] of p = yellow
     [
-      report 5
+      report stayYellow
     ]
 end
 
@@ -232,7 +236,7 @@ to make-venues
 
   ; now make the small stage to the north.
   ; changed x +/- 10 to x +- 30
-  ask patches with [ pycor > max-pycor - 2 and pxcor > 30 and pxcor < max-pxcor - 30 ] [
+  ask patches with [ pycor > max-pycor - 2 and pxcor > 3 and pxcor < max-pxcor - 30 ] [
     set pcolor orange
   ]
 
@@ -262,6 +266,10 @@ to setup-people
     set corona? false
     set infectious? false
     set vaccinated? false
+    set stayRed 100 + random 250
+    set stayOrange 20 + random 50
+    set stayYellow 2 + random 20
+    set stayBlue 5 + random 30
     if random-float 100 < %vaccinated [
       set vaccinated? true
       set color blue
@@ -282,8 +290,8 @@ end
 GRAPHICS-WINDOW
 255
 11
-1071
-828
+871
+628
 -1
 -1
 8.0
@@ -297,9 +305,9 @@ GRAPHICS-WINDOW
 0
 1
 0
-100
+75
 0
-100
+75
 1
 1
 1
@@ -364,7 +372,7 @@ SLIDER
 %infected
 0
 100
-1.87
+1.32
 0.11
 1
 NIL
@@ -395,6 +403,21 @@ mask
 0
 1
 -1000
+
+SLIDER
+15
+277
+187
+310
+infectiousness
+infectiousness
+100
+1000
+513.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
