@@ -91,9 +91,9 @@ to move
   ;        set at goal
   ;    else keep moving forward
   [
-    ifelse any? other turtles in-cone 1 45
+    ifelse any? other turtles in-cone 1 60
     [
-      let closest-visitor min-one-of other turtles in-cone 1 45 [distance myself]
+      let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
         if [ticks_since_here] of closest-visitor > 0
@@ -407,7 +407,7 @@ SWITCH
 383
 mask
 mask
-1
+0
 1
 -1000
 

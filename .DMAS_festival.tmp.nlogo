@@ -91,7 +91,7 @@ to move
   ;        set at goal
   ;    else keep moving forward
   [
-    ifelse any? other turtles in-cone 1 45
+    ifelse any? other turtles in-cone 1 4
     [
       let closest-visitor min-one-of other turtles in-cone 1 45 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
@@ -384,6 +384,32 @@ SLIDER
 1
 NIL
 HORIZONTAL
+
+SLIDER
+14
+284
+186
+317
+infectiousness
+infectiousness
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+47
+350
+150
+383
+mask
+mask
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
