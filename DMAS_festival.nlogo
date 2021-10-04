@@ -12,10 +12,12 @@ visitors-own[
   previous_destination
   ticks_since_here
   corona?
+  infectious?
+  vaccinated?
 ]
 
 globals[
-  infectiousness
+  mask-effectiveness
   entered
 ]
 
@@ -35,7 +37,7 @@ to go
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
     move
-    if corona? [infect]
+   if infectious? and ticks_since_here > 0 [infect]
   ]
   update
   tick
@@ -44,7 +46,10 @@ end
 
 to update
   ask visitors [
-    if corona? [
+    if corona? and not infectious?[
+      set color pink
+    ]
+    if corona? and infectious? [
       set color red
     ]
   ]
@@ -176,8 +181,15 @@ end
 
 to infect
   ask other visitors-here with [not corona?] [
-    if random-float 100 < infectiousness [
-      get-corona
+    ifelse mask [
+      if random-float 100 < (mask-effectiveness * infectiousness) and vaccinated? = false [
+        get-corona
+      ]
+    ]
+    [
+      if random-float 100 < infectiousness  and vaccinated? = false [
+        get-corona
+      ]
     ]
   ]
 end
@@ -244,18 +256,27 @@ to setup-people
     setxy 0 max-pycor
     ;This last bit sets the visitor's 'destination' variable
     set destination one-of patches with [
-      pcolor = yellow or pcolor = blue or pcolor = orange or pcolor = red
+      pcolor = red
     ]
     set previous_destination destination
     set corona? false
+    set infectious? false
+    set vaccinated? false
+    if random-float 100 < %vaccinated [
+      set vaccinated? true
+      set color blue
+    ]
+    if random-float 100 < %infected [
+      set infectious? true
+      set corona? true
+      set color red
+    ]
   ]
-  ask n-of 1 visitors
-  [ get-corona ]
 end
 
 to setup-globals
-  set infectiousness 69
   set entered 1
+  set mask-effectiveness 0.79
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -333,6 +354,62 @@ number-of-agents
 1
 NIL
 HORIZONTAL
+
+SLIDER
+14
+167
+186
+200
+%infected
+%infected
+0
+100
+50.05
+0.11
+1
+NIL
+HORIZONTAL
+
+SLIDER
+13
+225
+185
+258
+%vaccinated
+%vaccinated
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+14
+284
+186
+317
+infectiousness
+infectiousness
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+47
+350
+150
+383
+mask
+mask
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
