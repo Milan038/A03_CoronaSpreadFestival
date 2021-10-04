@@ -182,12 +182,12 @@ end
 to infect
   ask other visitors-here with [not corona?] [
     ifelse mask [
-      if random-float 100 < (mask-effectiveness * infectiousness) and vaccinated? = false [
+      if random-float 100 < (mask-effectiveness * (ticks_since_here / 1000)) and vaccinated? = false [
         get-corona
       ]
     ]
     [
-      if random-float 100 < infectiousness  and vaccinated? = false [
+      if random-float 100 < (ticks_since_here / 1000)  and vaccinated? = false [
         get-corona
       ]
     ]
@@ -364,7 +364,7 @@ SLIDER
 %infected
 0
 100
-50.05
+1.87
 0.11
 1
 NIL
@@ -379,22 +379,7 @@ SLIDER
 %vaccinated
 0
 100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-14
-284
-186
-317
-infectiousness
-infectiousness
-0
-100
-50.0
+0.0
 1
 1
 NIL
