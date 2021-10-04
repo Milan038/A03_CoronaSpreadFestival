@@ -89,7 +89,7 @@ to move
     ifelse any? other turtles in-cone 1 45
     [
       let closest-visitor min-one-of other turtles in-cone 1 45 [distance myself]
-      ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor
+      ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
         if [ticks_since_here] of closest-visitor > 0
         [
