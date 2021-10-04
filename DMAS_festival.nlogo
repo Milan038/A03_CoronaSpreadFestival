@@ -182,12 +182,12 @@ end
 to infect
   ask other visitors-here with [not corona?] [
     ifelse mask [
-      if random-float 100 < (mask-effectiveness * (ticks_since_here / 1000)) and vaccinated? = false [
+      if random-float 100 < (mask-effectiveness * (ticks_since_here / infectiousness)) and vaccinated? = false [
         get-corona
       ]
     ]
     [
-      if random-float 100 < (ticks_since_here / 1000)  and vaccinated? = false [
+      if random-float 100 < (ticks_since_here / infectiousness)  and vaccinated? = false [
         get-corona
       ]
     ]
@@ -386,10 +386,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-47
-350
-150
-383
+34
+298
+137
+331
 mask
 mask
 0

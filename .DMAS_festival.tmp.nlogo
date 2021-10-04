@@ -91,9 +91,9 @@ to move
   ;        set at goal
   ;    else keep moving forward
   [
-    ifelse any? other turtles in-cone 1 4
+    ifelse any? other turtles in-cone 1 60
     [
-      let closest-visitor min-one-of other turtles in-cone 1 45 [distance myself]
+      let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
         if [ticks_since_here] of closest-visitor > 0
@@ -182,12 +182,12 @@ end
 to infect
   ask other visitors-here with [not corona?] [
     ifelse mask [
-      if random-float 100 < (mask-effectiveness * infectiousness) and vaccinated? = false [
+      if random-float 100 < (mask-effectiveness * (ticks_since_here / infectiousness)) and vaccinated? = false [
         get-corona
       ]
     ]
     [
-      if random-float 100 < infectiousness  and vaccinated? = false [
+      if random-float 100 < (ticks_since_here / infectiousness)  and vaccinated? = false [
         get-corona
       ]
     ]
@@ -364,7 +364,7 @@ SLIDER
 %infected
 0
 100
-50.05
+1.87
 0.11
 1
 NIL
@@ -379,32 +379,17 @@ SLIDER
 %vaccinated
 0
 100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-14
-284
-186
-317
-infectiousness
-infectiousness
-0
-100
-50.0
+0.0
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-47
-350
-150
-383
+34
+332
+137
+365
 mask
 mask
 0
