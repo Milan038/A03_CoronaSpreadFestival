@@ -71,7 +71,7 @@ to move
       ]
       ; if a new destination is set, set it as previous destination for the next time
       set previous_destination destination
-      ;show(destination)
+      show(destination)
     ]
     [
       if (not any? other turtles in-cone 1 45) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
@@ -86,9 +86,9 @@ to move
   ;        set at goal
   ;    else keep moving forward
   [
-    ifelse any? other turtles in-cone 2 60
+    ifelse any? other turtles in-cone 2 45
     [
-      let closest-visitor min-one-of other turtles in-cone 2 60 [distance myself]
+      let closest-visitor min-one-of other turtles in-cone 2 4 [distance myself]
       ifelse destination = [destination] of closest-visitor
       [
         if [ticks_since_here] of closest-visitor > 0
