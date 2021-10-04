@@ -86,10 +86,10 @@ to move
   ;        set at goal
   ;    else keep moving forward
   [
-    ifelse any? other turtles in-cone 2 60
+    ifelse any? other turtles in-cone 1 45
     [
-      let closest-visitor min-one-of other turtles in-cone 2 60 [distance myself]
-      ifelse destination = [destination] of closest-visitor
+      let closest-visitor min-one-of other turtles in-cone 1 45 [distance myself]
+      ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor
       [
         if [ticks_since_here] of closest-visitor > 0
         [
