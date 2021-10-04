@@ -257,6 +257,7 @@ to setup-people
   create-visitors (0.01 * number-of-agents) [
     set shape "person"
     set color green
+    set size 1.5
     setxy 0 max-pycor
     ;This last bit sets the visitor's 'destination' variable
     set destination one-of patches with [
@@ -418,6 +419,35 @@ infectiousness
 1
 NIL
 HORIZONTAL
+
+PLOT
+25
+450
+225
+600
+Infections
+Hours
+People
+0.0
+10.0
+0.0
+7.0
+true
+true
+"" ""
+PENS
+"Infected" 1.0 0 -2674135 true "" "plot count visitors with [corona?]"
+
+MONITOR
+87
+399
+158
+444
+%infected
+count visitors with [corona?]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?

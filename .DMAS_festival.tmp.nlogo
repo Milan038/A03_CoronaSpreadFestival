@@ -236,7 +236,7 @@ to make-venues
 
   ; now make the small stage to the north.
   ; changed x +/- 10 to x +- 30
-  ask patches with [ pycor > max-pycor - 2 and pxcor > 3 and pxcor < max-pxcor - 30 ] [
+  ask patches with [ pycor > max-pycor - 2 and pxcor > 25 and pxcor < max-pxcor - 25 ] [
     set pcolor orange
   ]
 
@@ -257,6 +257,7 @@ to setup-people
   create-visitors (0.01 * number-of-agents) [
     set shape "person"
     set color green
+    set size 1.5
     setxy 0 max-pycor
     ;This last bit sets the visitor's 'destination' variable
     set destination one-of patches with [
@@ -313,6 +314,17 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
+
+MONITOR
+0
+0
+0
+0
+NIL
+NIL
+17
+1
+11
 
 BUTTON
 31
@@ -418,6 +430,24 @@ infectiousness
 1
 NIL
 HORIZONTAL
+
+PLOT
+25
+450
+225
+600
+Infections
+Hours
+People
+0.0
+10.0
+0.0
+7.0
+true
+true
+"" ""
+PENS
+"Infected" 1.0 0 -2674135 true "" "plot count visitors with [corona?]"
 
 @#$#@#$#@
 ## WHAT IS IT?
