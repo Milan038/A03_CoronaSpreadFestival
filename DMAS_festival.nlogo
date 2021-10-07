@@ -83,7 +83,7 @@ to move
       ;show(destination)
     ]
     [
-      if (not any? other turtles in-cone 1 45) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
+      if (not any? other turtles in-cone 1 60) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
       [
         forward 1
       ]
@@ -100,10 +100,23 @@ to move
       let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
-        if [ticks_since_here] of closest-visitor > 0
+        ; change to a random destination (with the same color) if standing still behind someone else with the same destination
+        ifelse [pcolor] of destination = red or [pcolor] of destination = orange
         [
-          set ticks_since_here ticks
+          ; if changing destination creates a destination to a brown patch, don't switch destination
+          if [pcolor] of patch [pxcor] of patch-here [pycor] of destination != brown
+          [
+            set destination (patch (21 + random 33) [pycor] of destination)
+          ]
         ]
+        [
+          ; if changing destination creates a destination to a brown patch, don't switch destination
+          if [pcolor] of patch [pxcor] of destination [pycor] of patch-here != brown
+          [
+            set destination (patch [pxcor] of destination (28 + random 20))
+          ]
+        ]
+        set ticks_since_here ticks
       ]
       [
         forward 1
@@ -186,7 +199,7 @@ end
 to infect
   ask other visitors-here with [not corona?] [
     ifelse mask [
-      if random-float 100 < (mask-effectiveness * (ticks_since_here / infectiousness)) and vaccinated? = false [
+      if random-float 100 < ((1 - mask-effectiveness) * (ticks_since_here / infectiousness)) and vaccinated? = false [
         get-corona
       ]
     ]
@@ -236,7 +249,7 @@ to make-venues
 
   ; now make the small stage to the north.
   ; changed x +/- 10 to x +- 30
-  ask patches with [ pycor > max-pycor - 2 and pxcor > 25 and pxcor < max-pxcor - 25 ] [
+  ask patches with [ pycor > max-pycor - 2 and pxcor > 20 and pxcor < max-pxcor - 20 ] [
     set pcolor orange
   ]
 
@@ -255,6 +268,7 @@ end
 
 to setup-people
   create-visitors (0.01 * number-of-agents) [
+    set size 1.5
     set shape "person"
     set color green
     set size 1.5
@@ -267,10 +281,10 @@ to setup-people
     set corona? false
     set infectious? false
     set vaccinated? false
-    set stayRed 100 + random 250
-    set stayOrange 20 + random 50
-    set stayYellow 2 + random 20
-    set stayBlue 5 + random 30
+    set stayRed 90 + random 180 ; agent stays at stage between 15-45 minutes
+    set stayOrange 60 + random 60 ; agent stays at toilet between 10-20 minutes
+    set stayYellow 30 + random 30 ; agent stays at beer stand 5-10 minutes
+    set stayBlue 60 + random 30 ; agent stays at food stand 10-15 minutes
     if random-float 100 < %vaccinated [
       set vaccinated? true
       set color blue
@@ -414,7 +428,7 @@ infectiousness
 infectiousness
 100
 1000
-513.0
+1000.0
 1
 1
 NIL
