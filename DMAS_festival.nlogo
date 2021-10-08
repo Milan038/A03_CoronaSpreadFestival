@@ -454,12 +454,23 @@ PENS
 "Infected" 1.0 0 -2674135 true "" "plot count visitors with [corona?]"
 
 MONITOR
-87
-399
-158
-444
-%infected
+124
+401
+221
+446
+Total infected
 count visitors with [corona?]
+17
+1
+11
+
+MONITOR
+28
+400
+102
+445
+% infected
+count visitors with [corona?] / count visitors
 17
 1
 11
