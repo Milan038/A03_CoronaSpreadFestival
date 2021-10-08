@@ -72,6 +72,7 @@ to move
     ifelse ticks - ticks_since_here > ticks-to-stay-on-patch destination
     [
       set ticks_since_here 0
+      ; find new destination till it is not the same as previous_destination, color-wise
       while [[pcolor] of previous_destination = [pcolor] of destination]
       [
         set destination one-of patches with [
@@ -80,7 +81,6 @@ to move
       ]
       ; if a new destination is set, set it as previous destination for the next time
       set previous_destination destination
-      ;show(destination)
     ]
     [
       if (not any? other turtles in-cone 1 60) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
@@ -167,15 +167,14 @@ to move-old
 
 end
 
+; function returning the correct ticks to stay at certain destination
 to-report ticks-to-stay-on-patch [p]
   if [pcolor] of p = red
     [
-      ; changed 50 to 150
       report stayRed
     ]
   if [pcolor] of p = orange
     [
-      ; changed 7 to 75
       report stayOrange
     ]
   if [pcolor] of p = blue
@@ -196,6 +195,8 @@ to get-corona
   set corona? true
 end
 
+;Check if other agents on the same patch have corona, if not check if mask is on/off
+;Create a chance that someone gets corona, based on ticks_since_here and infectiousness
 to infect
   ask other visitors-here with [not corona?] [
     ifelse mask [
