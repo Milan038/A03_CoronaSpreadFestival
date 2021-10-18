@@ -103,7 +103,6 @@ to move
         ])
       ]
       ; if a new destination is set, set it as previous destination for the next time
-
       set previous_destination destination
     ]
     [
@@ -161,57 +160,7 @@ to move
 
 end
 
-to move-old
-  ; agents faces destination
-  face destination
-  ; if the agent is close to the destination block, destination reached -> new destination
-  ifelse [pcolor] of patch-ahead 2 = [pcolor] of destination [
-    ;if ticks_since_here + 15 = ticks
-    if ticks - ticks_since_here > ticks-to-stay-on-patch patch-ahead 2
-    [
-      set ticks_since_here 0
-      ; the agent should not have the same destination as before
-      while [[pcolor] of previous_destination = [pcolor] of destination]
-      [
-        set prob random-float 100
-        (ifelse prob < 80
-        [
-          set destination one-of patches with [
-            pcolor = red
-          ]
-        ]
-        prob > 80 and prob < 90
-        [
-          set destination one-of patches with [
-            pcolor = yellow
-          ]
-        ]
-        prob > 90 and prob < 95
-        [
-          set destination one-of patches with [
-            pcolor = blue
-          ]
-        ]
-        prob > 95 and prob < 100
-        [
-          set destination one-of patches with [
-            pcolor = orange
-          ]
-        ])
-      ]
-      ; if a new destination is set, set it as previous destination for the next time
-      set previous_destination destination
-    ]
-  ]
-  [
-    forward 1
-    if [pcolor] of patch-ahead 2 = [pcolor] of destination
-    [
-      set ticks_since_here ticks
-    ]
-  ]
 
-end
 
 ; function returning the correct ticks to stay at certain destination
 to-report ticks-to-stay-on-patch [p]
