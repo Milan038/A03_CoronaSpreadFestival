@@ -23,6 +23,7 @@ visitors-own[
 globals[
   mask-effectiveness
   entered
+  prob
 ]
 
 
@@ -75,9 +76,31 @@ to move
       ; find new destination till it is not the same as previous_destination, color-wise
       while [[pcolor] of previous_destination = [pcolor] of destination]
       [
-        set destination one-of patches with [
-          pcolor = yellow or pcolor = blue or pcolor = orange or pcolor = red
+        set prob random-float 100
+        (ifelse prob < 80
+        [
+          set destination one-of patches with [
+            pcolor = red
+          ]
         ]
+        prob > 80 and prob < 90
+        [
+          set destination one-of patches with [
+            pcolor = yellow
+          ]
+        ]
+        prob > 90 and prob < 95
+        [
+          set destination one-of patches with [
+            pcolor = blue
+          ]
+        ]
+        prob > 95 and prob < 100
+        [
+          set destination one-of patches with [
+            pcolor = orange
+          ]
+        ])
       ]
       ; if a new destination is set, set it as previous destination for the next time
       set previous_destination destination
@@ -149,9 +172,31 @@ to move-old
       ; the agent should not have the same destination as before
       while [[pcolor] of previous_destination = [pcolor] of destination]
       [
-        set destination one-of patches with [
-          pcolor = yellow or pcolor = blue or pcolor = orange or pcolor = red
+        set prob random-float 100
+        (ifelse prob < 80
+        [
+          set destination one-of patches with [
+            pcolor = red
+          ]
         ]
+        prob > 80 and prob < 90
+        [
+          set destination one-of patches with [
+            pcolor = yellow
+          ]
+        ]
+        prob > 90 and prob < 95
+        [
+          set destination one-of patches with [
+            pcolor = blue
+          ]
+        ]
+        prob > 95 and prob < 100
+        [
+          set destination one-of patches with [
+            pcolor = orange
+          ]
+        ])
       ]
       ; if a new destination is set, set it as previous destination for the next time
       set previous_destination destination
