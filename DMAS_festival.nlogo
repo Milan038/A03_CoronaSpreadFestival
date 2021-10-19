@@ -11,6 +11,7 @@ visitors-own[
   destination
   previous_destination
   ticks_since_here
+  next_to_infectious
   corona?
   infectious?
   vaccinated?
@@ -42,7 +43,13 @@ to go
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
     move
-   if infectious? and ticks_since_here > 0 [infect]
+    ifelse any? other turtles in-cone 0.5 360 with [infectious?] [
+      set next_to_infectious next_to_infectious + 1
+    ]
+    [
+      set next_to_infectious 0
+    ]
+    if infectious? and ticks_since_here > 0 [infect]
   ]
   update
   tick
@@ -192,13 +199,15 @@ end
 ;Create a chance that someone gets corona, based on ticks_since_here and infectiousness
 to infect
   ask other visitors-here with [not corona?] [
+    let infect_probability 10 ^ ((log 101 10) / 90 * next_to_infectious) - 1
+    if infect_probability > 1.0 [set infect_probability 1.0]
     ifelse mask [
-      if random-float 100 < ((1 - mask-effectiveness) * (ticks_since_here / infectiousness)) and vaccinated? = false [
+      if random-float 100 < (1 - mask-effectiveness) * infect_probability and vaccinated? = false [
         get-corona
       ]
     ]
     [
-      if random-float 100 < (ticks_since_here / infectiousness)  and vaccinated? = false [
+      if random-float 100 < infect_probability  and vaccinated? = false [
         get-corona
       ]
     ]
@@ -409,7 +418,7 @@ SWITCH
 365
 mask
 mask
-0
+1
 1
 -1000
 
@@ -444,7 +453,7 @@ true
 true
 "" ""
 PENS
-"Infected" 1.0 0 -2674135 true "" "plot count visitors with [corona?]"
+"Infected" 1.0 0 -2674135 true "" "plot (count visitors with [corona?]) - (count visitors with [infectious?])"
 
 MONITOR
 124
@@ -452,7 +461,7 @@ MONITOR
 221
 446
 Total infected
-count visitors with [corona?]
+(count visitors with [corona?]) - (count visitors with [infectious?])
 17
 1
 11
@@ -463,7 +472,7 @@ MONITOR
 102
 445
 % infected
-count visitors with [corona?] / count visitors
+(count visitors with [corona?] / count visitors) * 100
 17
 1
 11
