@@ -23,6 +23,7 @@ visitors-own[
 
 globals[
   mask-effectiveness
+  vaccin-effectiveness
   entered
   prob
 ]
@@ -202,14 +203,27 @@ to infect
     let infect_probability 10 ^ ((log 101 10) / 90 * next_to_infectious) - 1
     if infect_probability > 1.0 [set infect_probability 1.0]
     ifelse mask [
-      if random-float 100 < (1 - mask-effectiveness) * infect_probability and vaccinated? = false [
-        get-corona
+      ifelse vaccinated? [
+        if(random-float 100 < (1 - mask-effectiveness) * infect_probability and random-float 100 < (1 - vaccin-effectiveness))[
+          get-corona
+        ]
+      ]
+      [
+        if(random-float 100 < (1 - mask-effectiveness) * infect_probability) [
+          get-corona
+        ]
       ]
     ]
     [
-
-      if random-float 100 < infect_probability  and vaccinated? = false [
-        get-corona
+      ifelse vaccinated? [
+        if (random-float 100 < infect_probability and random-float 100 < (1 - vaccin-effectiveness))  [
+          get-corona
+        ]
+      ]
+      [
+        if (random-float 100 < infect_probability) [
+          get-corona
+        ]
       ]
     ]
   ]
@@ -289,14 +303,16 @@ to setup-people
     set stayOrange 60 + random 60 ; agent stays at toilet between 10-20 minutes
     set stayYellow 30 + random 30 ; agent stays at beer stand 5-10 minutes
     set stayBlue 60 + random 30 ; agent stays at food stand 10-15 minutes
-    if random-float 100 < %vaccinated [
+    ifelse random-float 100 < %vaccinated [
       set vaccinated? true
       set color blue
     ]
-    if random-float 100 < %infected [
-      set infectious? true
-      set corona? true
-      set color red
+    [
+      if random-float 100 < %infected [
+        set infectious? true
+        set corona? true
+        set color red
+      ]
     ]
   ]
 end
@@ -304,6 +320,7 @@ end
 to setup-globals
   set entered 1
   set mask-effectiveness 0.79
+  set vaccin-effectiveness 0.95
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -406,7 +423,7 @@ SLIDER
 %vaccinated
 0
 100
-0.0
+50.0
 1
 1
 NIL
@@ -422,21 +439,6 @@ mask
 1
 1
 -1000
-
-SLIDER
-15
-277
-187
-310
-infectiousness
-infectiousness
-100
-1000
-1000.0
-1
-1
-NIL
-HORIZONTAL
 
 PLOT
 25
@@ -474,6 +476,17 @@ MONITOR
 445
 % infected
 (count visitors with [corona?] / count visitors) * 100
+17
+1
+11
+
+MONITOR
+80
+635
+209
+680
+Vaccinated + Corona
+(count visitors with [corona? and vaccinated?])
 17
 1
 11
