@@ -408,7 +408,7 @@ SLIDER
 %infected
 0
 100
-1.32
+0.0
 0.11
 1
 NIL
@@ -423,7 +423,7 @@ SLIDER
 %vaccinated
 0
 100
-50.0
+0.0
 1
 1
 NIL

@@ -408,7 +408,7 @@ SLIDER
 %infected
 0
 100
-1.32
+0.0
 0.11
 1
 NIL
@@ -423,17 +423,17 @@ SLIDER
 %vaccinated
 0
 100
-50.0
+0.0
 1
 1
 NIL
 HORIZONTAL
 
 SWITCH
-34
-332
-137
-365
+39
+285
+142
+318
 mask
 mask
 1
@@ -441,10 +441,10 @@ mask
 -1000
 
 PLOT
-25
-450
-225
-600
+10
+388
+210
+538
 Infections
 Hours
 People
@@ -459,10 +459,10 @@ PENS
 "Infected" 1.0 0 -2674135 true "" "plot (count visitors with [corona?]) - (count visitors with [infectious?])"
 
 MONITOR
-124
-401
-221
-446
+109
+339
+206
+384
 Total infected
 (count visitors with [corona?]) - (count visitors with [infectious?])
 17
@@ -470,23 +470,12 @@ Total infected
 11
 
 MONITOR
-28
-400
-102
-445
+13
+338
+87
+383
 % infected
 (count visitors with [corona?] / count visitors) * 100
-17
-1
-11
-
-MONITOR
-80
-635
-209
-680
-Vaccinated + Corona
-(count visitors with [(corona? and vaccinated?)]
 17
 1
 11
