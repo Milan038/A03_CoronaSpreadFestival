@@ -44,7 +44,7 @@ to go
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
     move
-    ifelse any? other turtles in-cone 0.5 360 with [infectious?] [
+    ifelse any? other turtles in-cone 0.75 360 with [infectious?] [
       set next_to_infectious next_to_infectious + 1
     ]
     [
