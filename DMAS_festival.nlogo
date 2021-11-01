@@ -28,7 +28,6 @@ globals[
   prob
 ]
 
-
 ; ************************************************
 ; ************     Go procedures      ************
 ; ************************************************
@@ -36,21 +35,25 @@ globals[
 
 ; This procedure is called every time the model iterates
 to go
-
+  if ticks > 2001 [stop]
   if entered < 100 [
     setup-people
   ]
   set entered entered + 1
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
+    if ticks > 2000 [infect-new]
     move
     ifelse any? other turtles in-cone 0.75 360 with [infectious?] [
       set next_to_infectious next_to_infectious + 1
     ]
     [
+      if next_to_infectious > 0 [
+        infect-new
+      ]
       set next_to_infectious 0
     ]
-    if infectious? and ticks_since_here > 0 [infect]
+    ;if infectious? and ticks_since_here > 0 [infect]
   ]
   update
   tick
@@ -228,6 +231,21 @@ to infect
     ]
   ]
 end
+
+to infect-new
+  let infect_probability 10 ^ ((log 101 10) / 90 * next_to_infectious) - 1
+    if infect_probability > 1.0 [set infect_probability 1.0]
+    ifelse mask [
+      if random-float 100 < (1 - mask-effectiveness) * infect_probability and vaccinated? = false [
+        get-corona
+      ]
+    ]
+    [
+      if random-float 100 < infect_probability  and vaccinated? = false [
+        get-corona
+      ]
+    ]
+end
 ; ************************************************
 ; ************    Setup procedures    ************
 ; ************************************************
@@ -320,7 +338,7 @@ end
 to setup-globals
   set entered 1
   set mask-effectiveness 0.79
-  set vaccin-effectiveness 0.95
+  set vaccin-effectiveness 0.90
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -408,7 +426,7 @@ SLIDER
 %infected
 0
 100
-0.0
+5.06
 0.11
 1
 NIL
@@ -430,21 +448,21 @@ NIL
 HORIZONTAL
 
 SWITCH
-39
-285
-142
-318
+34
+332
+137
+365
 mask
 mask
-1
+0
 1
 -1000
 
 PLOT
-10
-388
-210
-538
+25
+450
+225
+600
 Infections
 Hours
 People
@@ -459,10 +477,10 @@ PENS
 "Infected" 1.0 0 -2674135 true "" "plot (count visitors with [corona?]) - (count visitors with [infectious?])"
 
 MONITOR
-109
-339
-206
-384
+124
+401
+221
+446
 Total infected
 (count visitors with [corona?]) - (count visitors with [infectious?])
 17
@@ -470,12 +488,12 @@ Total infected
 11
 
 MONITOR
-13
-338
-87
-383
+28
+400
+102
+445
 % infected
-(count visitors with [corona?] / count visitors) * 100
+((count visitors with [corona?]) - (count visitors with [infectious?])) / count visitors * 100
 17
 1
 11
