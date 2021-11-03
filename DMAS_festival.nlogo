@@ -117,9 +117,37 @@ to move
       set previous_destination destination
     ]
     [
-      if (not any? other turtles in-cone 1 60) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
+      ; if visitor is not at the front of the destination
+      if([pcolor] of patch-ahead 2 != [pcolor] of destination)
       [
-        forward 1
+        ; check if the visitor is stuck behind someone else
+        ifelse (any? other turtles in-cone 1 60)
+        [
+          let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
+          ; if yes, change to a random destination (with the same color) if the person in front has the same destination
+          if ([pcolor] of destination = [[pcolor] of destination] of closest-visitor)
+          [
+            ifelse [pcolor] of destination = red or [pcolor] of destination = orange
+            [
+              ; if changing destination creates a destination to a brown patch, don't switch destination
+              if [pcolor] of patch [pxcor] of patch-here [pycor] of destination != brown
+              [
+                set destination (patch (21 + random 33) [pycor] of destination)
+              ]
+            ]
+            [
+              ; if changing destination creates a destination to a brown patch, don't switch destination
+              if [pcolor] of patch [pxcor] of destination [pycor] of patch-here != brown
+              [
+                set destination (patch [pxcor] of destination (28 + random 20))
+              ]
+            ]
+          ]
+        ; not stuck behind another visitor, move forward
+        ]
+        [
+          forward 1
+        ]
       ]
     ]
   ]
@@ -134,22 +162,6 @@ to move
       let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
-        ; change to a random destination (with the same color) if standing still behind someone else with the same destination
-        ifelse [pcolor] of destination = red or [pcolor] of destination = orange
-        [
-          ; if changing destination creates a destination to a brown patch, don't switch destination
-          if [pcolor] of patch [pxcor] of patch-here [pycor] of destination != brown
-          [
-            set destination (patch (21 + random 33) [pycor] of destination)
-          ]
-        ]
-        [
-          ; if changing destination creates a destination to a brown patch, don't switch destination
-          if [pcolor] of patch [pxcor] of destination [pycor] of patch-here != brown
-          [
-            set destination (patch [pxcor] of destination (28 + random 20))
-          ]
-        ]
         set ticks_since_here ticks
       ]
       [
@@ -830,7 +842,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.0
+NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
