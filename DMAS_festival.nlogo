@@ -35,14 +35,14 @@ globals[
 
 ; This procedure is called every time the model iterates
 to go
-  if ticks > 2001 [stop]
+  if ticks > 1801 [stop]
   if entered < 100 [
     setup-people
   ]
   set entered entered + 1
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
-    if ticks > 2000 [infect-new]
+    if ticks > 1800 [infect-new]
     move
     ifelse any? other turtles in-cone 0.75 360 with [infectious?] [
       set next_to_infectious next_to_infectious + 1
@@ -842,10 +842,28 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.2.1
+NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1800"/>
+    <metric>count turtles</metric>
+    <steppedValueSet variable="number-of-agents" first="500" step="500" last="2000"/>
+    <enumeratedValueSet variable="%vaccinated">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="mask">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="%infected">
+      <value value="1.5"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

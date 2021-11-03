@@ -28,7 +28,6 @@ globals[
   prob
 ]
 
-
 ; ************************************************
 ; ************     Go procedures      ************
 ; ************************************************
@@ -36,21 +35,25 @@ globals[
 
 ; This procedure is called every time the model iterates
 to go
-
+  if ticks > 1801 [stop]
   if entered < 100 [
     setup-people
   ]
   set entered entered + 1
   ; Tell the visitors to walk around (call a procedure called 'move')
   ask visitors [
+    if ticks > 1800 [infect-new]
     move
     ifelse any? other turtles in-cone 0.75 360 with [infectious?] [
       set next_to_infectious next_to_infectious + 1
     ]
     [
+      if next_to_infectious > 0 [
+        infect-new
+      ]
       set next_to_infectious 0
     ]
-    if infectious? and ticks_since_here > 0 [infect]
+    ;if infectious? and ticks_since_here > 0 [infect]
   ]
   update
   tick
@@ -114,9 +117,37 @@ to move
       set previous_destination destination
     ]
     [
-      if (not any? other turtles in-cone 1 60) and ([pcolor] of patch-ahead 2 != [pcolor] of destination)
+      ; if visitor is not at the front of the destination
+      if([pcolor] of patch-ahead 2 != [pcolor] of destination)
       [
-        forward 1
+        ; check if the visitor is stuck behind someone else
+        ifelse (any? other turtles in-cone 1 60)
+        [
+          let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
+          ; if yes, change to a random destination (with the same color) if the person in front has the same destination
+          if ([pcolor] of destination = [[pcolor] of destination] of closest-visitor)
+          [
+            ifelse [pcolor] of destination = red or [pcolor] of destination = orange
+            [
+              ; if changing destination creates a destination to a brown patch, don't switch destination
+              if [pcolor] of patch [pxcor] of patch-here [pycor] of destination != brown
+              [
+                set destination (patch (21 + random 33) [pycor] of destination)
+              ]
+            ]
+            [
+              ; if changing destination creates a destination to a brown patch, don't switch destination
+              if [pcolor] of patch [pxcor] of destination [pycor] of patch-here != brown
+              [
+                set destination (patch [pxcor] of destination (28 + random 20))
+              ]
+            ]
+          ]
+        ; not stuck behind another visitor, move forward
+        ]
+        [
+          forward 1
+        ]
       ]
     ]
   ]
@@ -131,22 +162,6 @@ to move
       let closest-visitor min-one-of other turtles in-cone 1 60 [distance myself]
       ifelse [pcolor] of destination = [[pcolor] of destination] of closest-visitor and [ticks_since_here] of closest-visitor > 0
       [
-        ; change to a random destination (with the same color) if standing still behind someone else with the same destination
-        ifelse [pcolor] of destination = red or [pcolor] of destination = orange
-        [
-          ; if changing destination creates a destination to a brown patch, don't switch destination
-          if [pcolor] of patch [pxcor] of patch-here [pycor] of destination != brown
-          [
-            set destination (patch (21 + random 33) [pycor] of destination)
-          ]
-        ]
-        [
-          ; if changing destination creates a destination to a brown patch, don't switch destination
-          if [pcolor] of patch [pxcor] of destination [pycor] of patch-here != brown
-          [
-            set destination (patch [pxcor] of destination (28 + random 20))
-          ]
-        ]
         set ticks_since_here ticks
       ]
       [
@@ -227,6 +242,21 @@ to infect
       ]
     ]
   ]
+end
+
+to infect-new
+  let infect_probability 10 ^ ((log 101 10) / 90 * next_to_infectious) - 1
+    if infect_probability > 1.0 [set infect_probability 1.0]
+    ifelse mask [
+      if random-float 100 < (1 - mask-effectiveness) * infect_probability and vaccinated? = false [
+        get-corona
+      ]
+    ]
+    [
+      if random-float 100 < infect_probability  and vaccinated? = false [
+        get-corona
+      ]
+    ]
 end
 ; ************************************************
 ; ************    Setup procedures    ************
@@ -320,7 +350,7 @@ end
 to setup-globals
   set entered 1
   set mask-effectiveness 0.79
-  set vaccin-effectiveness 0.95
+  set vaccin-effectiveness 0.90
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -393,7 +423,7 @@ number-of-agents
 number-of-agents
 0
 2000
-2000.0
+500.0
 1
 1
 NIL
@@ -408,8 +438,8 @@ SLIDER
 %infected
 0
 100
-1.0
-0.1
+1.5
+0.11
 1
 NIL
 HORIZONTAL
@@ -430,10 +460,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-39
-285
-142
-318
+34
+332
+137
+365
 mask
 mask
 1
@@ -441,10 +471,10 @@ mask
 -1000
 
 PLOT
-10
-388
-210
-538
+25
+450
+225
+600
 Infections
 Hours
 People
@@ -459,10 +489,10 @@ PENS
 "Infected" 1.0 0 -2674135 true "" "plot (count visitors with [corona?]) - (count visitors with [infectious?])"
 
 MONITOR
-109
-339
-206
-384
+124
+401
+221
+446
 Total infected
 (count visitors with [corona?]) - (count visitors with [infectious?])
 17
@@ -470,12 +500,12 @@ Total infected
 11
 
 MONITOR
-13
-338
-87
-383
+28
+400
+102
+445
 % infected
-(count visitors with [corona?] / count visitors) * 100
+((count visitors with [corona?]) - (count visitors with [infectious?])) / count visitors * 100
 17
 1
 11
@@ -816,6 +846,40 @@ NetLogo 6.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1800"/>
+    <metric>count turtles</metric>
+    <steppedValueSet variable="number-of-agents" first="500" step="500" last="2000"/>
+    <enumeratedValueSet variable="%vaccinated">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="mask">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="%infected">
+      <value value="1.5"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1800"/>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="number-of-agents">
+      <value value="2000"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="%vaccinated" first="0" step="10" last="100"/>
+    <enumeratedValueSet variable="mask">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="%infected">
+      <value value="1.5"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
